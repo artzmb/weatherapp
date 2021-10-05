@@ -1,0 +1,17 @@
+<resources>
+    <style name="Base.V27.Theme"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:navigationBarColor">@color/black_20pc</item>
+    </style>
+    
+    <style name="Theme.WeatherApp" parent="Base.V27.Theme">
+        <item name="android:statusBarColor">@color/black_20pc</item>
+
+        <item name="colorPrimary">@color/smalt</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorError">@color/cinnabar</item>
+
+        <item name="textInputStyle">@style/Theme.Cowboys.TextInputLayout</item>
+        <item name="buttonStyle">@style/TextAppearance.Button</item>
+    </style>
+</resources>
