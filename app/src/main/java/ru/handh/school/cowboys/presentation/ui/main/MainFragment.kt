@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.runBlocking
 import ru.handh.school.cowboys.R
 import ru.handh.school.cowboys.data.api.createWeatherApiClient
 import ru.handh.school.cowboys.data.repository.WeatherDataRepositoryImpl
@@ -19,9 +19,7 @@ class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
 
-    private val getTemperatureUseCase by lazy {
-        GetTemperatureUseCase(WeatherDataRepositoryImpl(createWeatherApiClient()))
-    }
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +27,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         return binding.root
     }
 
@@ -49,19 +48,22 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun loadTemperature() {
-        val params = GetTemperatureUseCase.Params(
-            latitude = binding.textLatitude.toString().toDoubleOrNull() ?: 0.0,
-            longitude = binding.textLongitude.toString().toDoubleOrNull() ?: 0.0
-        )
-        runBlocking {
-            val currentTemperature = getTemperatureUseCase(params)
-            // ~~~
+    override fun onStart() {
+        super.onStart()
+        // ~~~
+        viewModel.currentTemperatureLiveData.observe(this) {
             Snackbar.make(
                 requireView(),
-                getString(R.string.main_temperature_now, currentTemperature),
+                getString(R.string.main_temperature_now, it),
                 Snackbar.LENGTH_SHORT
             ).show()
         }
+    }
+
+    private fun loadTemperature() {
+        viewModel.loadTemperature(
+            latitude = binding.textLatitude.toString().toDoubleOrNull() ?: 0.0,
+            longitude = binding.textLongitude.toString().toDoubleOrNull() ?: 0.0
+        )
     }
 }
