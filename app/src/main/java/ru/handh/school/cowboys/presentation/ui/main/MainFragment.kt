@@ -7,11 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
+import ru.handh.school.cowboys.R
+import ru.handh.school.cowboys.data.api.createWeatherApiClient
+import ru.handh.school.cowboys.data.repository.WeatherDataRepositoryImpl
 import ru.handh.school.cowboys.databinding.FragmentMainBinding
+import ru.handh.school.cowboys.domain.usecase.GetTemperatureUseCase
 
 class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
+
+    private val getTemperatureUseCase by lazy {
+        GetTemperatureUseCase(WeatherDataRepositoryImpl(createWeatherApiClient()))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +49,16 @@ class MainFragment : Fragment() {
     }
 
     private fun loadTemperature() {
-
+        val params = GetTemperatureUseCase.Params(
+            latitude = binding.textLatitude.toString().toDoubleOrNull() ?: 0.0,
+            longitude = binding.textLongitude.toString().toDoubleOrNull() ?: 0.0
+        )
+        val currentTemperature = getTemperatureUseCase(params)
+        // ~~~
+        Snackbar.make(
+            requireView(),
+            getString(R.string.main_temperature_now, currentTemperature),
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 }

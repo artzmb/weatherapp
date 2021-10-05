@@ -4,4 +4,5 @@
     <string name="main_latitude">Широта</string>
     <string name="main_longitude">Долгота</string>
     <string name="main_action">Узнать температуру</string>
+    <string name="main_temperature_now">Сейчас здесь %1$f°C</string>
 </resources>
