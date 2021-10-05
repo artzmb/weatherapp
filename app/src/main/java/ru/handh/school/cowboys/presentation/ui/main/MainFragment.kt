@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.runBlocking
 import ru.handh.school.cowboys.R
 import ru.handh.school.cowboys.data.api.createWeatherApiClient
 import ru.handh.school.cowboys.data.repository.WeatherDataRepositoryImpl
@@ -53,12 +54,14 @@ class MainFragment : Fragment() {
             latitude = binding.textLatitude.toString().toDoubleOrNull() ?: 0.0,
             longitude = binding.textLongitude.toString().toDoubleOrNull() ?: 0.0
         )
-        val currentTemperature = getTemperatureUseCase(params)
-        // ~~~
-        Snackbar.make(
-            requireView(),
-            getString(R.string.main_temperature_now, currentTemperature),
-            Snackbar.LENGTH_SHORT
-        ).show()
+        runBlocking {
+            val currentTemperature = getTemperatureUseCase(params)
+            // ~~~
+            Snackbar.make(
+                requireView(),
+                getString(R.string.main_temperature_now, currentTemperature),
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 }

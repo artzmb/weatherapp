@@ -6,7 +6,7 @@ class GetTemperatureUseCase(
     private val weatherDataRepository: WeatherDataRepository
 ) {
 
-    operator fun invoke(params: Params): Double =
+    suspend operator fun invoke(params: Params): Double =
         weatherDataRepository.getTemperature(params.latitude, params.longitude)
 
     data class Params(

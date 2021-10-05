@@ -10,7 +10,7 @@ private const val DEFAULT_UNITS = "metric"
 interface WeatherApi {
 
     @GET("/data/2.5/weather")
-    fun getCurrentWeatherData(
+    suspend fun getCurrentWeatherData(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("appid") apiKey: String = API_KEY,
