@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import ru.handh.school.cowboys.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
