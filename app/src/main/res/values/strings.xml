@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">WeatherApp</string>
 
+    <string name="preferences_file_name">default</string>
+
     <string name="main_latitude">Широта</string>
     <string name="main_longitude">Долгота</string>
     <string name="main_action">Узнать температуру</string>

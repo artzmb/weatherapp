@@ -1,5 +1,6 @@
 package ru.handh.school.cowboys.presentation.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -8,18 +9,30 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.handh.school.cowboys.R
-import ru.handh.school.cowboys.data.api.createWeatherApiClient
-import ru.handh.school.cowboys.data.repository.WeatherDataRepositoryImpl
+import ru.handh.school.cowboys.data.local.Preferences
+import ru.handh.school.cowboys.data.local.PreferencesImpl
 import ru.handh.school.cowboys.databinding.FragmentMainBinding
-import ru.handh.school.cowboys.domain.usecase.GetTemperatureUseCase
 
 class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
 
     private lateinit var viewModel: MainViewModel
+
+    private val preferences: Preferences by lazy {
+        PreferencesImpl(
+            requireContext().getSharedPreferences(
+                getString(R.string.preferences_file_name),
+                Context.MODE_PRIVATE
+            )
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +45,14 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            val latitude = preferences.latitude
+            val longitude = preferences.longitude
+            withContext(Dispatchers.Main) {
+                binding.textLatitude.setText(latitude.toString())
+                binding.textLongitude.setText(longitude.toString())
+            }
+        }
         binding.buttonLoadTemperature.setOnClickListener {
             loadTemperature()
         }
@@ -61,9 +82,11 @@ class MainFragment : Fragment() {
     }
 
     private fun loadTemperature() {
-        viewModel.loadTemperature(
-            latitude = binding.textLatitude.toString().toDoubleOrNull() ?: 0.0,
-            longitude = binding.textLongitude.toString().toDoubleOrNull() ?: 0.0
-        )
+        val latitude = binding.textLatitude.text.toString().toDoubleOrNull() ?: 0.0
+        val longitude = binding.textLongitude.text.toString().toDoubleOrNull() ?: 0.0
+        // ~~~
+        viewModel.loadTemperature(latitude, longitude)
+        preferences.latitude = latitude.toFloat()
+        preferences.longitude = longitude.toFloat()
     }
 }
